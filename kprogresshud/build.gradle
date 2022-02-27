@@ -1,159 +1,30 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-    }
+plugins {
+    id "com.android.library"
+    id "org.jetbrains.kotlin.android"
 }
 
-
-apply plugin: 'com.android.library'
-
-project.archivesBaseName = 'kprogresshud'
-
 android {
-    compileSdkVersion 26
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 26
-        versionCode 120
-        versionName "1.2.0"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    lintOptions {
-        abortOnError false
-    }
 }
-
-dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
-}
-
-
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
 
 ext {
-    bintrayRepo = 'KProgressHUD'
-    bintrayName = 'KProgressHUD'
-
-    publishedGroupId = 'com.kaopiz'
-    libraryName = 'kprogresshud'
-    artifact = 'kprogresshud'
-
-    libraryDescription = 'A customizable ProgressHUD for Android'
-
-    siteUrl = 'http://kaopiz.github.io/KProgressHUD/'
-    gitUrl = 'https://github.com/Kaopiz/KProgressHUD'
-
-    libraryVersion = '1.2.0'
-
-    developerId = 'kaopiz'
-    developerName = 'Kaopiz Software Co., Ltd.'
-    developerEmail = 'contact@kaopiz.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+    PUBLISH_GROUP_ID = 'io.github.rupinderjeet'
+    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_ARTIFACT_ID = 'kprogresshud'
 }
 
-group = publishedGroupId
-version = libraryVersion
-
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
-
-// Bintray
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        userOrg = 'kaopiz'
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = allLicenses
-        publish = true
-        publicDownloadNumbers = true
-        version {
-            desc = libraryDescription
-            gpg {
-                sign = true //Determines whether to GPG sign the files. The default is false
-                passphrase = properties.getProperty("bintray.gpg.password")
-                //Optional. The passphrase for GPG signing'
-            }
-        }
-    }
-}
-
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                groupId 'com.kaopiz'
-                artifactId 'kprogresshud'
-
-                // Add your description here
-                name libraryName
-                description libraryDescription
-                url siteUrl
-
-                // Set your license
-                licenses {
-                    license {
-                        name licenseName
-                        url licenseUrl
-                    }
-                }
-                developers {
-                    developer {
-                        id developerId
-                        name developerName
-                        email developerEmail
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-
-                }
-            }
-        }
-    }
-}
+apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"

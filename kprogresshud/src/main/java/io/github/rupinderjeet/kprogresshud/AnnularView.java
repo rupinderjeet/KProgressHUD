@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.kaopiz.kprogresshud;
+package io.github.rupinderjeet.kprogresshud;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -24,7 +24,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-class PieView extends View implements Determinate {
+class AnnularView extends View implements Determinate {
 
     private Paint mWhitePaint;
     private Paint mGreyPaint;
@@ -32,31 +32,31 @@ class PieView extends View implements Determinate {
     private int mMax = 100;
     private int mProgress = 0;
 
-    public PieView(Context context) {
+    public AnnularView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
-    public PieView(Context context, AttributeSet attrs) {
+    public AnnularView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
-    public PieView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AnnularView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context);
     }
 
-    private void init(){
+    private void init(Context context){
         mWhitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mWhitePaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        mWhitePaint.setStrokeWidth(Helper.dpToPixel(0.1f, getContext()));
+        mWhitePaint.setStyle(Paint.Style.STROKE);
+        mWhitePaint.setStrokeWidth(Helper.dpToPixel(3, getContext()));
         mWhitePaint.setColor(Color.WHITE);
 
         mGreyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mGreyPaint.setStyle(Paint.Style.STROKE);
-        mGreyPaint.setStrokeWidth(Helper.dpToPixel(2, getContext()));
-        mGreyPaint.setColor(Color.WHITE);
+        mGreyPaint.setStrokeWidth(Helper.dpToPixel(3, getContext()));
+        mGreyPaint.setColor(context.getResources().getColor(R.color.kprogresshud_grey_color));
 
         mBound = new RectF();
     }
@@ -72,9 +72,8 @@ class PieView extends View implements Determinate {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         float mAngle = mProgress * 360f / mMax;
-        canvas.drawArc(mBound, 270, mAngle, true, mWhitePaint);
-        int padding = Helper.dpToPixel(4, getContext());
-        canvas.drawCircle(getWidth()/2, getHeight()/2, getWidth()/2-padding, mGreyPaint);
+        canvas.drawArc(mBound, 270, mAngle, false, mWhitePaint);
+        canvas.drawArc(mBound, 270 + mAngle, 360 - mAngle, false, mGreyPaint);
     }
 
     @Override
@@ -91,7 +90,7 @@ class PieView extends View implements Determinate {
 
     @Override
     public void setProgress(int progress) {
-        this.mProgress = progress;
+        mProgress = progress;
         invalidate();
     }
 }

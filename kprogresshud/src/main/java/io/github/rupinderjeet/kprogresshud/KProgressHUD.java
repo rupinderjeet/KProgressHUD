@@ -14,9 +14,8 @@
  *    limitations under the License.
  */
 
-package com.kaopiz.kprogresshud;
+package io.github.rupinderjeet.kprogresshud;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -391,9 +390,9 @@ public class KProgressHUD {
                 mIndeterminateView.setAnimationSpeed(mAnimateSpeed);
             }
 
-            mLabelText = (TextView) findViewById(com.kaopiz.kprogresshud.R.id.label);
+            mLabelText = (TextView) findViewById(R.id.label);
             setLabel(mLabel, mLabelColor);
-            mDetailsText = (TextView) findViewById(com.kaopiz.kprogresshud.R.id.details_label);
+            mDetailsText = (TextView) findViewById(R.id.details_label);
             setDetailsLabel(mDetailsLabel, mDetailColor);
         }
 

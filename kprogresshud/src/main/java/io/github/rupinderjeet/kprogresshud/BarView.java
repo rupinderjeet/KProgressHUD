@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.kaopiz.kprogresshud;
+package io.github.rupinderjeet.kprogresshud;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -24,39 +24,44 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-class AnnularView extends View implements Determinate {
+class BarView extends View implements Determinate {
 
-    private Paint mWhitePaint;
-    private Paint mGreyPaint;
+    private Paint mOuterPaint;
+    private Paint mInnerPaint;
     private RectF mBound;
+    private RectF mInBound;
     private int mMax = 100;
     private int mProgress = 0;
+    private float mBoundGap;
 
-    public AnnularView(Context context) {
+    public BarView(Context context) {
         super(context);
-        init(context);
+        init();
     }
 
-    public AnnularView(Context context, AttributeSet attrs) {
+    public BarView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init();
     }
 
-    public AnnularView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init();
     }
 
-    private void init(Context context){
-        mWhitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mWhitePaint.setStyle(Paint.Style.STROKE);
-        mWhitePaint.setStrokeWidth(Helper.dpToPixel(3, getContext()));
-        mWhitePaint.setColor(Color.WHITE);
+    private void init() {
+        mOuterPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mOuterPaint.setStyle(Paint.Style.STROKE);
+        mOuterPaint.setStrokeWidth(Helper.dpToPixel(2, getContext()));
+        mOuterPaint.setColor(Color.WHITE);
 
-        mGreyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mGreyPaint.setStyle(Paint.Style.STROKE);
-        mGreyPaint.setStrokeWidth(Helper.dpToPixel(3, getContext()));
-        mGreyPaint.setColor(context.getResources().getColor(R.color.kprogresshud_grey_color));
+        mInnerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mInnerPaint.setStyle(Paint.Style.FILL);
+        mInnerPaint.setColor(Color.WHITE);
+
+        mBoundGap = Helper.dpToPixel(5, getContext());
+        mInBound = new RectF(mBoundGap, mBoundGap,
+                (getWidth() - mBoundGap) * mProgress / mMax, getHeight() - mBoundGap);
 
         mBound = new RectF();
     }
@@ -64,23 +69,23 @@ class AnnularView extends View implements Determinate {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        int padding = Helper.dpToPixel(4, getContext());
+        int padding = Helper.dpToPixel(2, getContext());
         mBound.set(padding, padding, w - padding, h - padding);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float mAngle = mProgress * 360f / mMax;
-        canvas.drawArc(mBound, 270, mAngle, false, mWhitePaint);
-        canvas.drawArc(mBound, 270 + mAngle, 360 - mAngle, false, mGreyPaint);
+        canvas.drawRoundRect(mBound, mBound.height()/2, mBound.height()/2, mOuterPaint);
+        canvas.drawRoundRect(mInBound, mInBound.height()/2, mInBound.height()/2, mInnerPaint);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int dimension = Helper.dpToPixel(40, getContext());
-        setMeasuredDimension(dimension, dimension);
+        int widthDimension = Helper.dpToPixel(100, getContext());
+        int heightDimension = Helper.dpToPixel(20, getContext());
+        setMeasuredDimension(widthDimension, heightDimension);
     }
 
     @Override
@@ -90,7 +95,9 @@ class AnnularView extends View implements Determinate {
 
     @Override
     public void setProgress(int progress) {
-        mProgress = progress;
+        this.mProgress = progress;
+        mInBound.set(mBoundGap, mBoundGap,
+                (getWidth() - mBoundGap) * mProgress / mMax, getHeight() - mBoundGap);
         invalidate();
     }
 }

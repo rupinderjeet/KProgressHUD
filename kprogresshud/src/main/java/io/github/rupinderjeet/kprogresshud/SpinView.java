@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.kaopiz.kprogresshud;
+package io.github.rupinderjeet.kprogresshud;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -61,7 +61,7 @@ class SpinView extends ImageView implements Indeterminate {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.rotate(mRotateDegrees, getWidth() / 2, getHeight() / 2);
+        canvas.rotate(mRotateDegrees, getWidth() / 2f, getHeight() / 2f);
         super.onDraw(canvas);
     }
 
